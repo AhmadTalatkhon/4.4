@@ -1,30 +1,18 @@
 const students = [
-    { name: "Bekmurod", group: "NT-79", success: true },
-    { name: "Asliddin", group: "NT-77", success: true },
-    { name: "Ahmadxon", group: "NT-79", success: true },
-    { name: "Ibrohim", group: "NT-77", success: false },
-    { name: "Xojiakbarxon", group: "NT-79", success: true },
-    { name: "Abbos", group: "NT-79", success: true },
-    { name: "Iroda", group: "NT-77", success: true },
-    { name: "Abduraxim", group: "NT-70", success: false },
-    { name: "Komiljon", group: "NT-79", success: false },
-    { name: "Javlonbek", group: "NT-70", success: true },
-    { name: "Muhammadrizo", group: "NT-79", success: true },
-    { name: "Azizbek", group: "NT-79", success: false },
-    { name: "Jahongir", group: "NT-71", success: false },
-    { name: "Alisher", group: "NT-79", success: true },
-    { name: "Jake", group: "NT-77", success: true },
-    { name: "Kate", group: "NT-65", success: false },
-    { name: "Sam", group: "NT-77", success: false },
-    { name: "Phil", group: "NT-34", success: true },
-    { name: "Ed", group: "NT-45", success: true },
-    { name: "Tami", group: "NT-34", success: true },
-    { name: "Mary", group: "NT-45", success: false },
-    { name: "Becky", group: "NT-67", success: false },
-    { name: "Joey", group: "NT-45", success: true },
-    { name: "Jeff", group: "NT-34", success: true },
-    { name: "Zack", group: "NT-79", success: false },
-    { name: "Zack", group: "NT-71", success: false },
+    { id: 11, name: "Bekmurod", group: "NT-79", success: true },
+    { id: 12, name: "Asliddin", group: "NT-77", success: true },
+    { id: 13, name: "Ahmadxon", group: "NT-79", success: true },
+    { id: 14, name: "Ibrohim", group: "NT-77", success: false },
+    { id: 15, name: "Xojiakbarxon", group: "NT-79", success: true },
+    { id: 16, name: "Abbos", group: "NT-79", success: true },
+    { id: 17, name: "Iroda", group: "NT-77", success: true },
+    { id: 18, name: "Abduraxim", group: "NT-70", success: false },
+    { id: 19, name: "Komiljon", group: "NT-79", success: false },
+    { id: 20, name: "Javlonbek", group: "NT-70", success: true },
+    { id: 21, name: "Muhammadrizo", group: "NT-79", success: true },
+    { id: 22, name: "Azizbek", group: "NT-79", success: false },
+    { id: 23, name: "Jahongir", group: "NT-71", success: false },
+    { id: 24, name: "Alisher", group: "NT-79", success: true },
 ];
 
 const studentsTableBody = document.getElementById("student_table_body")
@@ -68,7 +56,35 @@ function renderStudents(s) {
         }
         resultTd.append(resultInner);
 
-        tr.append(orderTh, nameTd, groupTd, resultTd);
+        const delTd = document.createElement("td");
+        const delButton = document.createElement("button");
+        const editButton = document.createElement("button");
+        delButton.innerHTML = "Delete";
+        editButton.innerHTML = "Edit";
+        editButton.classList.add("btn", "btn-warning", "mx-2")
+        delButton.classList.add("btn", "btn-danger");
+        delButton.addEventListener("click", function(e) {
+            e.stopPropagation();
+            console.log(student.id);
+            students.splice(index, 1);
+
+            renderStudents(students)
+        })
+
+
+        editButton.setAttribute("data-bs-toggle", "modal")
+        editButton.setAttribute("data-bs-target", "#editModal")
+
+        editButton.onclick = (e) => {
+            e.stopPropagation();
+            const nameInput = document.getElementById("student-name");
+
+            nameInput.value = student.name
+        }
+        delTd.append(editButton, delButton);
+
+        tr.dataset.identifierId =student.id
+        tr.append(orderTh, nameTd, groupTd, resultTd, delTd);
         studentsTableBody.append(tr)
     })
 }
@@ -77,9 +93,23 @@ renderStudents(students)
 document.getElementById("input_filter").addEventListener('input', function (e) {
     const searchValue = e.target.value;
 
-    const filteredStudents = students.filter(student => student.name.toLowerCase().includes(searchValue.toLowerCase( )));
+    const filteredStudents = students.filter(student => student.name.toLowerCase().includes(searchValue.toLowerCase()));
 
     renderStudents(filteredStudents);
- 
+
 })
 
+studentsTableBody.addEventListener("click", (e) => {
+    const student = students.find(student => student.id === +e.target.parentNode.dataset.identifierId);
+
+    alert(student.name + " " + student.group)
+})
+
+document.getElementById("input_group").addEventListener('input', function (e) {
+    const searchGroupValue = e.target.value;
+
+    const filteredGroupStudents = students.filter(student => student.group.toLowerCase().includes(searchGroupValue.toLowerCase()));
+
+    renderStudents(filteredGroupStudents);
+
+})
